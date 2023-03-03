@@ -16,6 +16,9 @@ exporters:
     headers:
       "lightstep-access-token": ${env:LIGHTSTEP_ACCESS_TOKEN}
 
+processors:
+  batch:
+
 service:
   pipelines:
     traces:
