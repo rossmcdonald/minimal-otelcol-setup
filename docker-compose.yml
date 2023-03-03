@@ -1,0 +1,28 @@
+version: '3.9'
+
+x-default-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
+
+services:
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:0.61.0
+    container_name: otel-col
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: always
+    command: [ "--config=/etc/otelcol-config.yml" ]
+    volumes:
+      - ./otelcol-config.yml:/etc/otelcol-config.yml
+    ports:
+      - "4317"                  # OTLP over gRPC receiver
+      - "4318:4318"             # OTLP over HTTP receiver
+      - "9464"                  # Prometheus exporter
+      - "8888"                  # metrics endpoint
+    environment:
+      - LIGHTSTEP_ACCESS_TOKEN  # pass access token from environment
+    logging: *logging
